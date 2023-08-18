@@ -1,91 +1,85 @@
-<script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+<!DOCTYPE html>
+<html>
+<script src="./js/vendor/aframe.min.js"></script>
+<script src="./js/vendor/aframe-ar.js"></script>
+<script src="./js/vendor/zingtouch.min.js"></script>
 
-<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-<script>
-  window.onload = function() {
-    AFRAME.registerComponent("videohandler", {
-      init: function() {
-        var marker = this.el;
+<script src="./js/3d-ops.js"></script>
+<script src="./js/ar-cam.js"></script>
+<script src="./js/image-processor.js"></script>
+<script src="./js/ui-utils.js"></script>
+<!-- <script src="./js/debug.js"></script> -->
 
-        this.vid = document.querySelector("#vid");
-
-        marker.addEventListener(
-          "markerFound",
-          function() {
-            this.vid.play();
-          }.bind(this)
-        );
-
-        marker.addEventListener(
-          "markerLost",
-          function() {
-            this.vid.pause();
-            this.vid.currentTime = 0;
-          }.bind(this)
-        );
-      }
-    });
-  };
-</script>
-
-<style>
-  .arjs-loader {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .arjs-loader div {
-    text-align: center;
-    font-size: 1.25em;
-    color: white;
-  }
-</style>
+<link rel="stylesheet" href="./css/styles.css">
 
 <body style="margin : 0px; overflow: hidden;">
-  <div class="arjs-loader">
-    <div>Loading, please wait...</div>
-  </div>
-  <a-scene
-    vr-mode-ui="enabled: false;"
-    renderer="antialias: true; alpha: true; precision: mediump;"
-    embedded
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-  >
-    <a-assets>
-      <video
-        src="https://cdn.glitch.com/3e641d0e-e339-4228-98f6-3d3a0aa90b70%2FSampleVideo.mp4?v=1591441438404"
-        preload="auto"
-        id="vid"
-        response-type="arraybuffer"
-        loop
-        crossorigin
-        webkit-playsinline
-        autoplay
-        muted
-        playsinline
-      ></video>
-    </a-assets>
+    <div class="overlay" id="fullscreen-overlay">
+        <div class="lato">enter fullscreen</div>
+        <button id="fullscreen-button" onclick="requestFullScreen()"></button>
+        <div class="lato">for the best experience</div>
+    </div>
+    <div class="overlay" id="loading-overlay">
+        <div class="cssload-wrap">
+            <div class="cssload-cssload-spinner"></div>
+        </div>
+    </div>
+    <div class="overlay" id="rotate-overlay">
+        <div class="phone shadow">
+            <div class="screen"></div>
+        </div>
+        <div class="phone rotate90">
+            <div class="screen"></div>
+        </div>
+        <div class="arrow-wrap">
+            <div class="arrow-circle">
+                <div class="arrow"></div>
+            </div>
+            <div class="arrow-head"></div>
+        </div>
+        <span class="lato">rotate device</span>
+    </div>
+    <div class="overlay" id="snap-overlay">
+        <span class="lato">capturing...</span>
+    </div>
+    <div class="overlay" id="preview-overlay">
+        <div class="preview-container">
+            <img id="preview-img" src="" alt="preview">
+            <div class="preview-actions">
+                <span class="lato">preview</span>
+                <button id="save-capture-button">save</button>
+                <button id="retake-button">retake</button>
+            </div>
+        </div>
+    </div>
 
-    <a-nft
-      videohandler
-      type="nft"
-      url="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/allinreality/ARjs_ImageMarker/master/SampleARMarker1"
-      smooth="true"
-      smoothount="10"
-      smoothtolerance="0.01"
-      smooththreshold="5"
-    >
-      <a-video src="#vid" rotation="-90 0 0" position="50 150 -100" width="300" height="175">
-      </a-video>
-    </a-nft>
-    <a-entity camera></a-entity>
-  </a-scene>
+    <!-- <div id="log"></div> -->
+    <section class="log" style="display: none;">
+        <div id="positionLog">Position: 0 -0.75 0</div>
+        <div id="rotationLog">Rotation: 0 0 0</div>
+        <div id="zoomLog">Scale: 0.35</div>
+    </section>
+    <section class="controls">
+        <!--
+        <button onclick="X()">X</button>
+        <button onclick="Y()">Y</button>
+        <button onclick="Z()">Z</button>
+        <button onclick="P()">P</button> 
+        -->
+        <button id="move-button" class="toggler" onclick="toggleMove()"></button>
+        <button id="snap-button" onclick="getSnap()"></button>
+        <button id="rotate-button" class="toggler" onclick="toggleRotate()"></button>
+    </section>
+    <a-scene id="scene" embedded arjs vr-mode-ui="enabled: false"
+        renderer="antialias: true; logarithmicDepthBuffer: true; colorManagement: true; sortObjects: true;">
+        <a-marker preset="hiro" smooth="true">
+            <a-entity position="0 0 0" rotation="270 0 0">
+                <a-entity id='theModel' position="0 -0.5 0" rotation="0 0 0" scale="12.5 12.5 12.5"
+                    gltf-model="./assets/3d-models/doggy.glb">
+                </a-entity>
+            </a-entity>
+        </a-marker>
+        <a-entity id="camera" camera></a-entity>
+    </a-scene>
 </body>
+
+</html>
