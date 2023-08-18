@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 
 <html>
   <head>
@@ -21,5 +21,80 @@
         <a-gltf-model rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#avatarModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
       </a-entity>
     </a-scene>
+  </body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuforia-web-sdk@10"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      // Initialize Three.js
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('container').appendChild(renderer.domElement);
+
+      // Initialize Vuforia
+      Vuforia.init({
+        licenseKey: 'AWwhtwj/////AAABmczrxb2K2Et9mUHpaXeNePNLQ8DprDY1U8ymTiNdXt4pY2WUqAdeghDnqIpI6+85mxuSR/NkL7ykyBZNlSt1lHQ7LEtgZnCk4GKZPomsYjeyucn3ES0UtnAoVxBbBpOOYydxGxcBU/tRBL5T4XFjGMhH4y9pqO/YCt4u1b1jmMgh2RkoHfx+98P1V4DLKFw0n75yO9NKTeDZU/I81pdUP2ysAIqeHFJFPhKqimuZg52xA9rdZ/ytvnfDnrarfUKlF7AZyJ578Z0I7kryVUxEFzelCCYaRRzkbwraXT00gUt/L9CDVM48fF7V7+VJDpdTfk7Av7/c3YxV7+MusgSW8fOKNMvA+4n6MLSxDje2rI5+',
+      });
+
+      // Set up Vuforia image target
+      Vuforia.ImageTracker.createDataSet({
+        type: 'Device',
+        name: 'jothisir',
+        onDataSetActivated: (dataSet) => {
+          // Start rendering loop
+          animate();
+        },
+      });
+
+      // Start the camera and rendering loop
+      Vuforia.CameraDevice.getInstance().init({
+        callback: () => {
+          Vuforia.CameraDevice.getInstance().start(() => {
+            camera.position.z = 5;
+            animate();
+          });
+        },
+      });
+
+      // Add Three.js objects to the scene
+      const geometry = new THREE.BoxGeometry();
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      // Rendering loop
+      function animate() {
+        // Update Three.js objects based on Vuforia tracking
+        const trackable = Vuforia.TrackableResult.getTrackables()[0];
+        if (trackable) {
+          // Update Three.js object's position and rotation
+          cube.position.copy(trackable.getPosition());
+        }
+
+        // Render the scene
+        renderer.render(scene, camera);
+
+        // Call animate recursively
+        requestAnimationFrame(animate);
+      }
+    </script>
   </body>
 </html>
