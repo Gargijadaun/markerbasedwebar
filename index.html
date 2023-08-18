@@ -30,7 +30,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
     <a-scene
@@ -52,46 +51,27 @@
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-      
-      <!-- Create multiple target entities with different rotations -->
-      <a-entity id="targetContainer">
-        <!-- Front side -->
-        <a-entity mindar-image-target="targetIndex: 0">
-          <a-plane
-            src="#card"
-            position="0 0 0"
-            height="0.552"
-            width="1"
-            rotation="0 0 0"
-          ></a-plane>
-          <a-gltf-model
-            rotation="0 0 0"
-            position="0 0 0.1"
-            scale="0.005 0.005 0.005"
-            src="#avatarModel"
-            animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
-          ></a-gltf-model>
-        </a-entity>
-
-        <!-- Back side -->
-        <!-- Add more sides as needed with different rotations -->
+      <a-entity id="objectContainer" position="0 0 0">
+        <a-gltf-model
+          id="placedObject"
+          rotation="0 0 0"
+          position="0 0 0.1"
+          scale="0.005 0.005 0.005"
+          src="#avatarModel"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
+        ></a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
-      AFRAME.registerComponent('target-manager', {
+      AFRAME.registerComponent('persist-position', {
         init: function () {
-          const targetContainer = document.getElementById('targetContainer');
-          const targets = targetContainer.querySelectorAll('[mindar-image-target]');
-          
-          // Adjust the detection range for each target
-          targets.forEach((target, index) => {
-            target.addEventListener('mindarimagefound', () => {
-              const distance = /* Calculate distance to target based on camera position and target position */;
-              if (distance < /* Your desired detection distance */) {
-                target.setAttribute('mindar-image-target', 'targetIndex', index);
-              }
-            });
+          this.initialPosition = this.el.object3D.position.clone();
+          this.el.sceneEl.addEventListener('mindarimagefound', () => {
+            this.el.object3D.position.copy(this.initialPosition);
+          });
+          this.el.sceneEl.addEventListener('mindarimagelost', () => {
+            this.initialPosition = this.el.object3D.position.clone();
           });
         },
       });
