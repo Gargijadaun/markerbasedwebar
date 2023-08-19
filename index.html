@@ -11,7 +11,14 @@
     <body style='margin : 0px; overflow: hidden;'>
         <a-scene vr-mode-ui="enabled: false" markerhandler embedded arjs='sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
 
-        <a-marker type='image' url='./07-barcode.jpg'>
+        <!-- <a-marker type='image' url='./07-barcode.jpg'> -->
+            <a-nft
+            type="nft"
+            url="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/allinreality/target"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance=".01"
+            smoothThreshold="5">
             <a-video
                 src="./video.mp4"
                 smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2"
@@ -19,7 +26,8 @@
                 rotation="-90 -0 0"
                 >
             </a-video>
-        </a-marker>
+        <!-- </a-marker> -->
+            </a-nft>
 
         <a-entity camera></a-entity>
         </a-scene>
