@@ -11,19 +11,85 @@
     
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene
+      mindar-image="imageTargetSrc: ./targets.mind;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
       <a-assets>
         <img id="card" src="./jothisir.jpg" />
-        <a-asset-item id="avatarModel" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
+        <a-asset-item
+          id="avatarModel"
+          src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"
+        ></a-asset-item>
       </a-assets>
 
-      <a-camera position="0 8 8" look-controls="enabled: false"
-      fov="80"></a-camera>
+      <a-camera
+        position="0 8 8"
+        look-controls="enabled: false"
+        fov="80"
+      ></a-camera>
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-plane src="#card" position="0 0 0" height="1" width="1" rotation="0 0 0"></a-plane>
-        <a-gltf-model rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#avatarModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        <a-plane
+          src="#card"
+          position="0 0 0"
+          height="1"
+          width="1"
+          rotation="0 0 0"
+        ></a-plane>
+        <a-gltf-model
+          rotation="0 0 0 "
+          position="0 0 0.1"
+          scale="0.005 0.005 0.005"
+          src="#avatarModel"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
+        ></a-gltf-model>
+        <a-entity
+          visible="false"
+          position="0 0.1 0"
+          scale="0.2 0.2 0.2"
+          text="value: Image Target Detected!; align: center; color: white; width: 4"
+          material="shader: flat"
+          geometry="primitive: plane"
+          animation__fadein="property: components.material.material.color; type: color; from: #FFF; to: #FFF; dur: 1000; startEvents: show"
+          animation__fadeout="property: components.material.material.color; type: color; from: #FFF; to: #FFF; dur: 1000; startEvents: hide"
+        ></a-entity>
+        <a-box
+          visible="false"
+          position="0 0.05 0"
+          width="0.4"
+          height="0.4"
+          depth="0.4"
+          material="color: cyan"
+          animation__fadein="property: components.material.material.color; type: color; from: #00FFFF; to: #00FFFF; dur: 1000; startEvents: show"
+          animation__fadeout="property: components.material.material.color; type: color; from: #00FFFF; to: #00FFFF; dur: 1000; startEvents: hide"
+        ></a-box>
       </a-entity>
     </a-scene>
+    <script>
+      AFRAME.registerComponent("mindar-image-target", {
+        init: function () {
+          const target = this.el;
+          target.addEventListener("mindarimagetracking", (event) => {
+            if (event.detail.found) {
+              const message = target.querySelector('[text]');
+              message.emit('show');
+              
+              const cube = target.querySelector('a-box');
+              cube.emit('show');
+            } else {
+              const message = target.querySelector('[text]');
+              message.emit('hide');
+              
+              const cube = target.querySelector('a-box');
+              cube.emit('hide');
+            }
+          });
+        },
+      });
+    </script>
   </body>
 </html>
 <!-- <!DOCTYPE html>
