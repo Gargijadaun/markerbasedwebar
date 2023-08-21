@@ -1,92 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Image Target with Three.js</title>
+  <title>WebXR AR Example</title>
   <style>
-    body { margin: 0; }
+    body { margin: 0; overflow: hidden; }
     canvas { display: block; }
   </style>
 </head>
 <body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  
-  <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
 
-    const targetImage = new Image();
-    targetImage.src = './jothisir.jpg'; // Replace with your image path
+    let scene, camera, renderer;
+    let cube;
+    let targetImage = new Image();
+    targetImage.src = './jothisir.jpg'; // Replace with the actual path
 
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(),
-      new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-    );
-    scene.add(cube);
-    cube.visible = false; // Initially hide the cube
+    async function init() {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
 
-    const video = document.createElement('video');
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    const constraints = { video: { facingMode: 'environment' } };
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then((stream) => {
-        video.srcObject = stream;
-        video.play();
-        video.onloadedmetadata = () => {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          detectImage();
-        };
-      })
-      .catch((error) => {
-        console.error('Error accessing camera:', error);
-      });
+      const xrSupported = 'xr' in navigator && 'supportsSession' in navigator.xr;
 
-    function detectImage() {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      if (xrSupported) {
+        const session = await navigator.xr.requestSession('immersive-ar', {
+          requiredFeatures: ['hit-test'],
+        });
 
-      const targetImageData = context.createImageData(canvas.width, canvas.height);
-      targetImageData.data.set(imageData.data);
+        const referenceSpace = await session.requestReferenceSpace('viewer');
 
-      const targetCanvas = document.createElement('canvas');
-      targetCanvas.width = targetImage.width;
-      targetCanvas.height = targetImage.height;
-      const targetContext = targetCanvas.getContext('2d');
-      targetContext.drawImage(targetImage, 0, 0);
-
-      const targetImageDataArray = new Uint8ClampedArray(targetImageData.data.buffer);
-
-      for (let i = 0; i < imageData.data.length; i += 4) {
-        const rDiff = Math.abs(targetImageDataArray[i] - imageData.data[i]);
-        const gDiff = Math.abs(targetImageDataArray[i + 1] - imageData.data[i + 1]);
-        const bDiff = Math.abs(targetImageDataArray[i + 2] - imageData.data[i + 2]);
+        const viewerPose = new XRViewerPose(await session.requestFrameOfReference('viewer'));
         
-        if (rDiff + gDiff + bDiff < 100) {
-          cube.visible = true; // Show the cube if the image is detected
-          break;
+        camera.matrix.fromArray(viewerPose.transform.matrix);
+        camera.updateMatrixWorld(true);
+
+        const hitTestSource = await session.requestHitTestSource({ space: referenceSpace });
+
+        cube = new THREE.Mesh(
+          new THREE.BoxGeometry(),
+          new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+        );
+        cube.visible = false;
+        scene.add(cube);
+
+        function animate(timestamp, frame) {
+          session.requestAnimationFrame(animate);
+
+          const hitTestResults = frame.getHitTestResults(hitTestSource);
+
+          if (hitTestResults.length > 0) {
+            const pose = hitTestResults[0].getPose(referenceSpace);
+
+            if (pose) {
+              cube.position.set(pose.transform.position.x, pose.transform.position.y, pose.transform.position.z);
+              cube.quaternion.set(pose.transform.orientation.x, pose.transform.orientation.y, pose.transform.orientation.z, pose.transform.orientation.w);
+              cube.visible = true;
+            }
+          }
+
+          renderer.render(scene, camera);
         }
+
+        session.requestAnimationFrame(animate);
+      } else {
+        console.error('WebXR is not supported in this browser.');
       }
-
-      renderer.render(scene, camera);
-      requestAnimationFrame(detectImage);
     }
 
-    camera.position.z = 5;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-      renderer.render(scene, camera);
-    }
-
-    animate();
+    init();
   </script>
 </body>
 </html>
