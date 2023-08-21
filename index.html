@@ -5,6 +5,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     <!-- <script src="https://rawgit.com/gasolin/aframe-href-component/master/dist/aframe-href-component.min.js"></script> -->
     <script src="./script.js" ></script>
+    <link rel="stylesheet" type="text/css" href="./style.css" /> 
   </head>
   <body>
     <a-scene  mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
@@ -27,31 +28,27 @@
         </a-gltf-model>
 <a-video src="#penguin-sledding" width="1" height="1" position="1 0 0"></a-video>
         <!-- Adding four small cubes under the plane with social media icons -->
-        <a-entity position="-0.4 -0.39 0" id="button1">
+        <a-entity position="-0.4 -0.39 0" id="button1" class="clickable">
           <a-plane depth="0.1" width="0.1" height="0.1" color="white">
             <a-image src="#linkedinIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
-            <!-- You can add text or other elements inside the button here -->
           </a-plane>
         </a-entity>
         
-        <a-entity position="-0.125 -0.39 0" id="button2">
+        <a-entity position="-0.125 -0.39 0" id="button2" class="clickable">
           <a-plane depth="0.1" width="0.1" height="0.1" color="white">
             <a-image src="#instagramIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
-            <!-- You can add text or other elements inside the button here -->
           </a-plane>
         </a-entity>
         
-        <a-entity position="0.125 -0.39 0" id="button3">
+        <a-entity position="0.125 -0.39 0" id="button3" class="clickable">
           <a-plane depth="0.1" width="0.1" height="0.1" color="white">
             <a-image src="#twitterIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
-            <!-- You can add text or other elements inside the button here -->
           </a-plane>
         </a-entity>
         
-        <a-entity position="0.4 -0.39 0" id="button4">
+        <a-entity position="0.4 -0.39 0" id="button4" class="clickable">
           <a-plane depth="0.1" width="0.1" height="0.1" color="white">
             <a-image src="#webIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
-            <!-- You can add text or other elements inside the button here -->
           </a-plane>
         </a-entity>
       </a-entity>
