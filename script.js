@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const box1 = document.querySelector("#box1");
-    const box2 = document.querySelector("#box2");
-    const box3 = document.querySelector("#box3");
-    const box4 = document.querySelector("#box4");
+    const box1 = document.querySelector("#button1");
+    const box2 = document.querySelector("#button2");
+    const box3 = document.querySelector("#button3");
+    const box4 = document.querySelector("#button4");
   
     box1.addEventListener("click", function () {
       // Open the LinkedIn link in a new tab
