@@ -1,56 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>WebXR AR Example</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markerless WebAR with Camera</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.0.8/aframe/build/aframe-ar.js"></script>
 </head>
 <body>
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
+    <a-scene embedded arjs>
+        <!-- Camera -->
+        <a-entity camera
+            id="camera"
+            position="0 1.6 0"
+            look-controls>
+        </a-entity>
+        
+        <!-- Business Card Image Target -->
+        <a-image
+            id="business-card-target"
+            src="./jothisir.jpg"
+            scale="0.2 0.2 0.2"
+            position="0 0 -1"
+            arjs-anchor>
+        </a-image>
+        
+        <!-- 3D Box to Display -->
+        <a-box
+            id="display-box"
+            position="0 0 0"
+            color="red"
+            scale="0.1 0.1 0.1"
+            visible="false"
+            arjs-anchor="target: #business-card-target;">
+        </a-box>
+    </a-scene>
 
-    let scene, camera, renderer;
-    let cube;
-    let targetImage = new Image();
-    targetImage.src = './jothisir.jpg'; // Replace with the actual path
+    <script>
+        // Get references to the camera, image target, and display box
+        const camera = document.querySelector("#camera");
+        const imageTarget = document.querySelector("#business-card-target");
+        const displayBox = document.querySelector("#display-box");
 
-    async function init() {
-      const container = document.createElement('div');
-      document.body.appendChild(container);
+        // Listen for the imagefound event on the image target
+        imageTarget.addEventListener("imagefound", () => {
+            displayBox.setAttribute("visible", "true"); // Show the display box
+        });
 
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      container.appendChild(renderer.domElement);
-
-      const xrSupported = 'xr' in navigator && 'supportsSession' in navigator.xr;
-
-      if (xrSupported) {
-        document.body.addEventListener('click', startARSession); // User interaction to start AR session
-      } else {
-        console.error('WebXR is not supported in this browser.');
-      }
-    }
-
-    async function startARSession() {
-      document.body.removeEventListener('click', startARSession); // Remove the listener after user interaction
-
-      const session = await navigator.xr.requestSession('immersive-ar', {
-        requiredFeatures: ['hit-test'],
-      });
-
-      const referenceSpace = await session.requestReferenceSpace('viewer');
-
-      const viewerPose = new XRViewerPose(await session.requestFrameOfReference('viewer'));
-
-      // ... (rest of the code for AR rendering)
-    }
-
-    init();
-  </script>
+        // Listen for the imagelost event on the image target
+        imageTarget.addEventListener("imagelost", () => {
+            displayBox.setAttribute("visible", "false"); // Hide the display box
+        });
+    </script>
 </body>
 </html>
