@@ -1,32 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Get references to the social media boxes
-    const box1 = document.getElementById("#box1");
-    const box2 = document.getElementById("#box2");
-    const box3 = document.getElementById("#box3");
-    const box4 = document.getElementById("#box4");
+    const box1 = document.querySelector("#box1");
+    const box2 = document.querySelector("#box2");
+    const box3 = document.querySelector("#box3");
+    const box4 = document.querySelector("#box4");
   
-    // Define the links for each social media platform
-    const linkedinLink = "https://www.linkedin.com/";
-    const instagramLink = "https://www.instagram.com/";
-    const twitterLink = "https://twitter.com/";
-    const webLink = "https://www.example.com/";
-  
-    // Add event listeners to the boxes
     box1.addEventListener("click", function () {
-      console.log("Clicked on box1");
-      window.open(linkedinLink, "_blank");
+      // Open the LinkedIn link in a new tab
+      window.open("https://www.linkedin.com/", "_blank");
     });
   
     box2.addEventListener("click", function () {
-      window.open(instagramLink, "_blank");
+      // Open the Instagram link in a new tab
+      window.open("https://www.instagram.com/", "_blank");
     });
   
     box3.addEventListener("click", function () {
-      window.open(twitterLink, "_blank");
+      // Open the Twitter link in a new tab
+      window.open("https://www.twitter.com/", "_blank");
     });
   
     box4.addEventListener("click", function () {
-      window.open(webLink, "_blank");
+      // Open the personal website link in a new tab
+      window.open("https://www.example.com/", "_blank");
     });
   });
   
