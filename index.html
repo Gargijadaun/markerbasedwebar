@@ -1,119 +1,62 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<html >
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | My project (1)</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <!-- <script src="https://rawgit.com/gasolin/aframe-href-component/master/dist/aframe-href-component.min.js"></script> -->
+    <script src="./script.js" ></script>
   </head>
   <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">My project (1)</div>
-      </div>
-    </div>
-    <script>
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
+    <a-scene  mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-assets>
+        <img id="card" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.png" />
+        <a-asset-item id="avatarModel" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
+        <!-- Social media icons -->
+        <img id="linkedinIcon" src="./linkdln.png" />
+        <img id="instagramIcon" src="./instagram.png" />
+        <img id="twitterIcon" src="./twitter.png" />
+        <img id="webIcon" src="./web.png" />
+        <video id="penguin-sledding" autoplay loop="true" src="./Doctor Strange Magic Shield Black screen ll Portal, Shield & partical effect ll download free.mp4"></video>
+      </a-assets>
+ 
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-entity mindar-image-target="targetIndex: 0">
+<!--         <a-plane src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane> -->
+        <a-gltf-model rotation="0 0 0 " position="0 0.5 0.1" scale="0.005 0.005 0.005" src="#avatarModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-gltf-model>
+<a-video src="#penguin-sledding" width="1" height="1" position="1 0 0"></a-video>
+        <!-- Adding four small cubes under the plane with social media icons -->
+   <a-entity position="-0.4 -0.39 0">
+            <a-box id="box1" depth="0.1" width="0.1" height="0.1" color="white" >
+                <a-image src="#linkedinIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
+                <a-plane visible="false" height="0.09" width="0.09"></a-plane>
+            </a-box>
+        </a-entity>
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/webglbuild.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/webglbuild.data",
-        frameworkUrl: buildUrl + "/webglbuild.framework.js",
-        codeUrl: buildUrl + "/webglbuild.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "My project (1)",
-        productVersion: "1.0",
-        showBanner: unityShowBanner,
-      };
+        <a-entity position="-0.125 -0.39 0">
+            <a-box id="box2" depth="0.1" width="0.1" height="0.1" color="white" >
+                <a-image src="#instagramIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
+                <a-plane visible="false" height="0.09" width="0.09"></a-plane>
+            </a-box>
+        </a-entity>
 
-      // By default Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+        <a-entity position="0.125 -0.39 0">
+            <a-box id="box3" depth="0.1" width="0.1" height="0.1" color="white" >
+                <a-image src="#twitterIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
+                <a-plane visible="false" height="0.09" width="0.09"></a-plane>
+            </a-box>
+        </a-entity>
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+        <a-entity position="0.4 -0.39 0">
+            <a-box id="box4" depth="0.1" width="0.1" height="0.1" color="white" >
+                <a-image src="#webIcon" width="0.05" height="0.05" position="0 0 0.055"></a-image>
+                <a-plane visible="false" height="0.09" width="0.09"></a-plane>
+            </a-box>
+        </a-entity>
+      </a-entity>
+         
+    </a-scene>
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-        unityShowBanner('WebGL builds are not supported on mobile devices.');
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
-
-      loadingBar.style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-          loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
-    </script>
   </body>
 </html>
