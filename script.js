@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Get references to the social media boxes
-    const box1 = document.getElementById("box1");
-    const box2 = document.getElementById("box2");
-    const box3 = document.getElementById("box3");
-    const box4 = document.getElementById("box4");
+    const box1 = document.getElementById("#box1");
+    const box2 = document.getElementById("#box2");
+    const box3 = document.getElementById("#box3");
+    const box4 = document.getElementById("#box4");
   
     // Define the links for each social media platform
     const linkedinLink = "https://www.linkedin.com/";
