@@ -19,33 +19,74 @@
 
     const targetImage = new Image();
     targetImage.src = './jothisir.jpg'; // Replace with your image path
-    targetImage.onload = init;
 
-    function init() {
-      camera.position.z = 5;
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(),
+      new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    );
+    scene.add(cube);
+    cube.visible = false; // Initially hide the cube
 
-      const geometry = new THREE.BoxGeometry();
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+    const video = document.createElement('video');
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
 
-      const texture = new THREE.Texture(targetImage);
-      texture.needsUpdate = true;
+    const constraints = { video: { facingMode: 'environment' } };
 
-      const planeGeometry = new THREE.PlaneGeometry(2, 2);
-      const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-      scene.add(plane);
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        video.srcObject = stream;
+        video.play();
+        video.onloadedmetadata = () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          detectImage();
+        };
+      })
+      .catch((error) => {
+        console.error('Error accessing camera:', error);
+      });
 
-      function animate() {
-        requestAnimationFrame(animate);
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-        renderer.render(scene, camera);
+    function detectImage() {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+      const targetImageData = context.createImageData(canvas.width, canvas.height);
+      targetImageData.data.set(imageData.data);
+
+      const targetCanvas = document.createElement('canvas');
+      targetCanvas.width = targetImage.width;
+      targetCanvas.height = targetImage.height;
+      const targetContext = targetCanvas.getContext('2d');
+      targetContext.drawImage(targetImage, 0, 0);
+
+      const targetImageDataArray = new Uint8ClampedArray(targetImageData.data.buffer);
+
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        const rDiff = Math.abs(targetImageDataArray[i] - imageData.data[i]);
+        const gDiff = Math.abs(targetImageDataArray[i + 1] - imageData.data[i + 1]);
+        const bDiff = Math.abs(targetImageDataArray[i + 2] - imageData.data[i + 2]);
+        
+        if (rDiff + gDiff + bDiff < 100) {
+          cube.visible = true; // Show the cube if the image is detected
+          break;
+        }
       }
 
-      animate();
+      renderer.render(scene, camera);
+      requestAnimationFrame(detectImage);
     }
+
+    camera.position.z = 5;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+
+    animate();
   </script>
 </body>
 </html>
