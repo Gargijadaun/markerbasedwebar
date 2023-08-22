@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Simple AR - A Web based AR for A-Frame</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  </head>
-  <body>
-    <script
-      src="https://cdn.jsdelivr.net/gh/akbartus/Simple-AR/dist/0.1.2/simple-ar.min.js"
-      onload="onWasmLoaded();"
-    ></script>
-    <a-scene>
-      <a-entity simple-ar="src: img/target.jpg; minCutOffValue: 1; betaValue:0.1;">
-        <a-plane
-          position="0 0 0"
-          rotation="0 0 0"
-          width="1"
-          height="1"
-          material="src: https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg"
-        ></a-plane>
-      </a-entity>
-      <a-camera position="0 0 0"></a-camera>
-    </a-scene>
-  </body>
+    <head>
+
+    </head>
+    <body>
+        <h1>Examples</h1>
+        <h2>Image-Tracking</h2>
+        <ul>
+            <li><a href="examples/image-tracking/compile.html">compile</a> </li>
+            <li><a href="examples/image-tracking/debug.html">debug</a></li>
+            <li><a href="examples/image-tracking/example1.html">Example 1</a></li>
+            <li><a href="examples/image-tracking/example2.html">Example 2</a></li>
+            <li><a href="examples/image-tracking/example3.html">Example 3</a></li>
+            <li><a href="examples/image-tracking/example4.html">Example 4</a></li>
+            <li><a href="examples/image-tracking/three.html">Three</a></li>
+        </ul>
+        <h2>Face-Tracking</h2>
+        <ul>
+            <li><a href="examples/face-tracking/debug.html">debug</a></li>
+            <li><a href="examples/face-tracking/example1.html">Example 1</a></li>
+            <li><a href="examples/face-tracking/example2.html">Example 2</a></li>
+            <li><a href="examples/face-tracking/example3.html">Example 3</a></li>
+            <li><a href="examples/face-tracking/three-css.html">three-CSS</a></li>
+            <li><a href="examples/face-tracking/three-facemesh.html">three-FaceMesh</a></li>
+            <li><a href="examples/face-tracking/three.html">three</a></li>
+        </ul>
+    </body>
 </html>
